@@ -1,0 +1,63 @@
+{
+    "name": "mridang/phpunit-reporters",
+    "description": "A PHPUnit reporter that displays code coverage in the console.",
+    "keywords": [
+        "phpunit",
+        "reporter",
+        "coverage",
+        "jest",
+        "istanbul"
+    ],
+    "homepage": "https://github.com/mridang/phpunit-reporters",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "Mridang Agarwalla",
+            "homepage": "https://mridang.com"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "ext-simplexml": "*",
+        "phpunit/phpunit": "^9.5 || ^10.0 || ^11.0 || ^12.0",
+        "symfony/console": "^6.0 || ^7.0",
+      "ext-libxml": "*"
+    },
+    "require-dev": {
+      "friendsofphp/php-cs-fixer": "^3.64",
+      "icanhazstring/composer-unused": "^0.9.3",
+      "phpstan/phpstan": "^1.12",
+      "phpstan/phpstan-symfony": "^1.4",
+      "rector/rector": "^1.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Mridang\\PHPUnitReporters\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Mridang\\PHPUnitReporters\\Tests\\": "tests/"
+        }
+    },
+    "support": {
+        "issues": "https://github.com/mridang/phpunit-reporters/issues",
+        "source": "https://github.com/mridang/phpunit-reporters"
+    },
+  "scripts": {
+    "test": "phpunit --coverage-html=build/coverage/html --coverage-clover=build/coverage/clover.xml",
+    "rector": "rector process",
+    "phpstan": "phpstan analyse --memory-limit=-1",
+    "format": "php-cs-fixer fix",
+    "depcheck": "composer-unused"
+  },
+  "config": {
+    "platform": {
+      "php": "8.3.0"
+    },
+    "allow-plugins": {
+      "php-http/discovery": true
+    },
+    "process-timeout": 600
+  }
+}

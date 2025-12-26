@@ -21,14 +21,14 @@
         "ext-simplexml": "*",
         "phpunit/phpunit": "^9.5 || ^10.0 || ^11.0 || ^12.0",
         "symfony/console": "^6.0 || ^7.0",
-      "ext-libxml": "*"
+        "ext-libxml": "*"
     },
     "require-dev": {
-      "friendsofphp/php-cs-fixer": "^3.64",
-      "icanhazstring/composer-unused": "^0.9.3",
-      "phpstan/phpstan": "^1.12",
-      "phpstan/phpstan-symfony": "^1.4",
-      "rector/rector": "^1.2"
+        "friendsofphp/php-cs-fixer": "^3.64",
+        "icanhazstring/composer-unused": "^0.9.3",
+        "phpstan/phpstan": "^1.12",
+        "phpstan/phpstan-symfony": "^1.4",
+        "rector/rector": "^1.2"
     },
     "autoload": {
         "psr-4": {
@@ -44,20 +44,21 @@
         "issues": "https://github.com/mridang/phpunit-reporters/issues",
         "source": "https://github.com/mridang/phpunit-reporters"
     },
-  "scripts": {
-    "test": "phpunit --coverage-html=build/coverage/html --coverage-clover=build/coverage/clover.xml",
-    "rector": "rector process",
-    "phpstan": "phpstan analyse --memory-limit=-1",
-    "format": "php-cs-fixer fix",
-    "depcheck": "composer-unused"
-  },
-  "config": {
-    "platform": {
-      "php": "8.3.0"
+    "scripts": {
+        "test": "phpunit --coverage-html=build/coverage/html --coverage-clover=build/coverage/clover.xml",
+        "rector": "rector process",
+        "phpstan": "phpstan analyse --memory-limit=-1",
+        "format": "php-cs-fixer fix",
+        "depcheck": "composer-unused"
     },
-    "allow-plugins": {
-      "php-http/discovery": true
+    "config": {
+        "platform": {
+            "php": "8.3.0"
+        },
+        "allow-plugins": {
+            "php-http/discovery": true
+        },
+        "process-timeout": 600
     },
-    "process-timeout": 600
-  }
+    "version": "1.0.0"
 }

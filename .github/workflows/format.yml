@@ -1,0 +1,40 @@
+name: Format Code (PHP-CS-Fixer)
+
+on: push
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    working-directory: ./
+
+jobs:
+  code-formatting:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, xml, ctype, iconv, pdo_sqlite, pdo_mysql, pdo_pgsql, dom
+          tools: composer:v2
+
+      - name: Install Dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Run PHP-CS-Fixer
+        run: composer format
+
+      - name: Commit and Push Changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Apply PHP formatting
+          commit_options: '--no-verify'
+          repository: .
+          commit_user_name: github-actions[bot]
+          commit_user_email: github-actions[bot]@users.noreply.github.com
+          commit_author: GitHub Actions <actions@github.com>

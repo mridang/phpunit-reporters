@@ -17,7 +17,7 @@
         }
     ],
     "require": {
-        "php": "^8.2",
+        "php": "^8.3",
         "ext-simplexml": "*",
         "phpunit/phpunit": "^10.0 || ^11.0 || ^12.0",
         "symfony/console": "^6.0 || ^7.0",

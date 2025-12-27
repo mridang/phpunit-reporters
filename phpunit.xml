@@ -14,6 +14,11 @@
       <directory>./tests</directory>
     </testsuite>
   </testsuites>
+  <extensions>
+    <bootstrap class="Mridang\PHPUnitReporters\JestReporterExtension">
+      <parameter name="cloverPath" value="build/coverage/clover.xml"/>
+    </bootstrap>
+  </extensions>
   <php>
     <ini name="error_reporting" value="E_ALL"/>
     <ini name="memory_limit" value="1024M"/>

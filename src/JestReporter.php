@@ -8,50 +8,29 @@ use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableSeparator;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Terminal;
 
-/**
- * Renders code coverage in Jest/Istanbul's console table format.
- *
- * This reporter displays coverage metrics in a hierarchical table showing
- * directories and files with their statement, branch, and line coverage
- * percentages, plus uncovered line numbers for each file.
- */
 class JestReporter
 {
-    /** @var int Number of spaces per indentation level. */
-    private const TAB_SIZE = 2;
+    private const int TAB_SIZE = 2;
+    private const int TABLE_BORDER_PADDING = 16;
+    private const int PERCENTAGE_COLUMNS_WIDTH = 24;
 
-    /** @var string Path to the clover.xml report file. */
     private string $cloverReportPath;
+    private int $maxUncoveredWidth = 0;
 
-    /**
-     * Creates a new Jest-style coverage reporter.
-     *
-     * @param OutputInterface $output The output interface for rendering.
-     */
     public function __construct(
-        private readonly OutputInterface $output = new ConsoleOutput()
+        private readonly OutputInterface $output = new ConsoleOutput(),
+        private readonly ?int $terminalWidth = null
     ) {
     }
 
-    /**
-     * Prints coverage summary from an external clover report path.
-     *
-     * @param string $cloverReportPath Path to the clover.xml file.
-     */
     public function printCoverageSummaryExternal(string $cloverReportPath): void
     {
         $this->cloverReportPath = $cloverReportPath;
         $this->printCoverageSummary();
     }
 
-    /**
-     * Prints the coverage summary table to the output.
-     *
-     * Parses the clover.xml report, builds a hierarchical tree of coverage
-     * nodes, and renders them as a formatted table with color-coded
-     * percentages.
-     */
     public function printCoverageSummary(): void
     {
         $this->output->writeln('');
@@ -73,6 +52,8 @@ class JestReporter
 
         $tree = CoverageNode::buildTree($files);
 
+        $this->calculateMaxUncoveredWidth($tree);
+
         $table = new Table($this->output);
         $table->setHeaders([
             'File',
@@ -87,13 +68,6 @@ class JestReporter
         $table->render();
     }
 
-    /**
-     * Recursively adds a coverage node and its children to the table.
-     *
-     * @param Table        $table  The table to add rows to.
-     * @param CoverageNode $node   The coverage node to render.
-     * @param bool         $isRoot Whether this is the root node.
-     */
     private function addNodeToTable(
         Table $table,
         CoverageNode $node,
@@ -138,15 +112,6 @@ class JestReporter
         }
     }
 
-    /**
-     * Formats coverage metrics as a color-coded percentage string.
-     *
-     * Colors: green >= 80%, yellow >= 50%, red < 50%.
-     *
-     * @param CoverageMetrics $metrics The metrics to format.
-     *
-     * @return string Formatted percentage with ANSI color codes.
-     */
     private function formatPercentage(CoverageMetrics $metrics): string
     {
         if ($metrics->total === 0) {
@@ -168,15 +133,7 @@ class JestReporter
         );
     }
 
-    /**
-     * Formats uncovered line numbers as compressed ranges.
-     *
-     * Consecutive lines are grouped into ranges (e.g., "1-5,10,15-20").
-     *
-     * @param list<int> $lines The uncovered line numbers.
-     *
-     * @return string Comma-separated ranges or empty string if none.
-     */
+    /** @param list<int> $lines */
     private function formatUncoveredLines(array $lines): string
     {
         if (empty($lines)) {
@@ -201,6 +158,46 @@ class JestReporter
         }
         $ranges[] = $start === $end ? (string) $start : $start . '-' . $end;
 
-        return implode(',', $ranges);
+        $result = implode(',', $ranges);
+
+        if ($this->maxUncoveredWidth > 0 && strlen($result) > $this->maxUncoveredWidth) {
+            return substr($result, 0, $this->maxUncoveredWidth - 3) . '...';
+        }
+
+        return $result;
+    }
+
+    private function calculateMaxUncoveredWidth(CoverageNode $tree): void
+    {
+        $terminalWidth = $this->terminalWidth ?? (new Terminal())->getWidth();
+
+        if ($terminalWidth <= 0) {
+            $this->maxUncoveredWidth = 0;
+            return;
+        }
+
+        $maxFileWidth = $this->getMaxFileWidth($tree, 0);
+        $maxFileWidth = max($maxFileWidth, strlen('All files'));
+
+        $fixedWidth = self::TABLE_BORDER_PADDING
+            + $maxFileWidth
+            + self::PERCENTAGE_COLUMNS_WIDTH;
+
+        $availableWidth = $terminalWidth - $fixedWidth;
+
+        $this->maxUncoveredWidth = max(0, $availableWidth);
+    }
+
+    private function getMaxFileWidth(CoverageNode $node, int $depth): int
+    {
+        $indent = ($depth > 0) ? ($depth - 1) * self::TAB_SIZE : 0;
+        $maxWidth = $indent + strlen($node->name);
+
+        foreach ($node->children as $child) {
+            $childWidth = $this->getMaxFileWidth($child, $depth + 1);
+            $maxWidth = max($maxWidth, $childWidth);
+        }
+
+        return $maxWidth;
     }
 }

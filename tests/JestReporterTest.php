@@ -15,6 +15,7 @@ final class JestReporterTest extends TestCase
     private string $mockCloverReportPath;
     private MockOutput $mockOutput;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->mockCloverReportPath = __DIR__ . '/fixtures/clover.xml';
@@ -43,9 +44,9 @@ final class JestReporterTest extends TestCase
         $output = $this->mockOutput->getOutput();
 
         $this->assertStringContainsString('All files', $output);
-        $this->assertStringContainsString('75.00', $output); // Total statements
-        $this->assertStringContainsString('66.67', $output); // Total branches
-        $this->assertStringContainsString('72.73', $output); // Total lines
+        $this->assertStringContainsString('75.00', $output);
+        $this->assertStringContainsString('66.67', $output);
+        $this->assertStringContainsString('72.73', $output);
     }
 
     public function testCoverageSummaryDisplaysDirectoryStructure(): void
@@ -55,7 +56,6 @@ final class JestReporterTest extends TestCase
 
         $output = $this->mockOutput->getOutput();
 
-        // Should show the 'src' directory (the directory containing the files)
         $this->assertStringContainsString('src', $output);
     }
 
@@ -77,10 +77,10 @@ final class JestReporterTest extends TestCase
 
         $output = $this->mockOutput->getOutput();
 
-        $this->assertStringContainsString('60.00', $output); // Statements for Calculator.php
-        $this->assertStringContainsString('50.00', $output); // Branches for Calculator.php
-        $this->assertStringContainsString('57.14', $output); // Lines for Calculator.php
-        $this->assertStringContainsString('100.00', $output); // Full coverage for StringUtils.php
+        $this->assertStringContainsString('60.00', $output);
+        $this->assertStringContainsString('50.00', $output);
+        $this->assertStringContainsString('57.14', $output);
+        $this->assertStringContainsString('100.00', $output);
     }
 
     public function testCoverageSummaryDisplaysUncoveredLineRanges(): void
@@ -90,7 +90,7 @@ final class JestReporterTest extends TestCase
 
         $output = $this->mockOutput->getOutput();
 
-        $this->assertStringContainsString('11,13-14', $output); // Uncovered lines for Calculator.php
+        $this->assertStringContainsString('11,13-14', $output);
     }
 
     public function testCoverageSummaryHandlesMissingReportFile(): void
@@ -101,5 +101,28 @@ final class JestReporterTest extends TestCase
         $output = $this->mockOutput->getOutput();
 
         $this->assertStringContainsString('Code coverage report not found', $output);
+    }
+
+    public function testUncoveredLinesTruncatedWithEllipsisWhenExceedingTerminalWidth(): void
+    {
+        $manyUncoveredPath = __DIR__ . '/fixtures/clover-many-uncovered.xml';
+        $reporter = new JestReporter($this->mockOutput, 80);
+        $reporter->printCoverageSummaryExternal($manyUncoveredPath);
+
+        $output = $this->mockOutput->getOutput();
+
+        $this->assertStringContainsString('...', $output);
+        $this->assertStringNotContainsString('100', $output);
+    }
+
+    public function testUncoveredLinesNotTruncatedWhenTerminalWidthSufficient(): void
+    {
+        $reporter = new JestReporter($this->mockOutput, 200);
+        $reporter->printCoverageSummaryExternal($this->mockCloverReportPath);
+
+        $output = $this->mockOutput->getOutput();
+
+        $this->assertStringContainsString('11,13-14', $output);
+        $this->assertStringNotContainsString('...', $output);
     }
 }

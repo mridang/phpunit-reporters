@@ -17,6 +17,7 @@ final class CoverageReportTest extends TestCase
 {
     private string $mockCloverReportPath;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->mockCloverReportPath = __DIR__ . '/fixtures/clover.xml';

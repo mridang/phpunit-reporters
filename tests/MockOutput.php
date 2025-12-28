@@ -21,6 +21,7 @@ class MockOutput implements OutputInterface
      * @return void
      * @noinspection PhpDocSignatureInspection
      */
+    #[\Override]
     public function write(string|iterable $messages, bool $newline = false, int $options = self::OUTPUT_NORMAL): void
     {
         if (is_iterable($messages)) {
@@ -40,6 +41,7 @@ class MockOutput implements OutputInterface
      * @param int $options
      * @noinspection PhpDocSignatureInspection
      */
+    #[\Override]
     public function writeln(string|iterable $messages, int $options = self::OUTPUT_NORMAL): void
     {
         if (is_iterable($messages)) {
@@ -51,49 +53,59 @@ class MockOutput implements OutputInterface
         }
     }
 
+    #[\Override]
     public function setVerbosity(int $level): void
     {
     }
 
+    #[\Override]
     public function getVerbosity(): int
     {
         return self::VERBOSITY_NORMAL;
     }
 
+    #[\Override]
     public function isQuiet(): bool
     {
         return false;
     }
 
+    #[\Override]
     public function isVerbose(): bool
     {
         return false;
     }
 
+    #[\Override]
     public function isVeryVerbose(): bool
     {
         return false;
     }
 
+    #[\Override]
     public function isDebug(): bool
     {
         return false;
     }
 
+    #[\Override]
     public function isDecorated(): bool
     {
         return false;
     }
 
+    #[\Override]
     public function setDecorated(bool $decorated): void
     {
     }
 
+    #[\Override]
     public function setFormatter(OutputFormatterInterface $formatter): void
     {
         $this->formatter = $formatter;
     }
 
+    #[\Override]
     public function getFormatter(): OutputFormatterInterface
     {
         if ($this->formatter === null) {

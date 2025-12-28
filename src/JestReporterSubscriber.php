@@ -13,6 +13,7 @@ final readonly class JestReporterSubscriber implements FinishedSubscriber
     {
     }
 
+    #[\Override]
     public function notify(Finished $event): void
     {
         $reporter = new JestReporter();

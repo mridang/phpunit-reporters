@@ -11,6 +11,7 @@ use PHPUnit\TextUI\Configuration\Configuration;
 
 final class JestReporterExtension implements Extension
 {
+    #[\Override]
     public function bootstrap(Configuration $configuration, Facade $facade, ParameterCollection $parameters): void
     {
         $cloverPath = $parameters->has('cloverPath')

@@ -28,3 +28,9 @@ jobs:
 
       - name: Run Tests
         run: composer test
+
+      - name: Generate coverage report
+        uses: mridang/action-test-reporter@feat/add-test-result-support
+        with:
+          results-path: 'build/reports/**/*.xml'
+          coverage-path: 'build/coverage/clover.xml'

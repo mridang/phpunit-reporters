@@ -19,6 +19,9 @@
       <parameter name="cloverPath" value="build/coverage/clover.xml"/>
     </bootstrap>
   </extensions>
+  <logging>
+    <junit outputFile="build/reports/junit.xml"/>
+  </logging>
   <php>
     <ini name="error_reporting" value="E_ALL"/>
     <ini name="memory_limit" value="1024M"/>

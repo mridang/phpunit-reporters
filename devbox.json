@@ -8,9 +8,6 @@
     "XDEBUG_MODE": "coverage"
   },
   "shell": {
-    "init_hook": [
-      "composer install"
-    ],
     "scripts": {
       "format": [
         "composer format"
